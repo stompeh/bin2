@@ -1,0 +1,28 @@
+import sys
+
+binData: bytes
+tempData: str
+
+with open(sys.argv[0], "rb") as binFile:
+    binData = binFile.read()
+
+bcount = 0
+tempData = "#pragma once\n"
+tempData += "#include <vector>\n"
+tempData += "static std::vector<unsigned char> sdata = \n"
+
+tempData += "{ "
+
+for byte in binData:
+    tempData += "0x" + hex(byte)[2:].zfill(2) + ", "
+    bcount += 1
+    if (bcount == 8):
+        tempData += "\n"
+        bcount = 0
+
+tempData += "}"
+tempData = tempData.replace(", }", " };")
+
+
+with open("sdata.h", "w") as sData:
+    sData.write(tempData)
